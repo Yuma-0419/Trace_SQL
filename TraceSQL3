@@ -1,10 +1,14 @@
 --対象URL
-　
+　https://github.com/mustafaa7med/Hotel-Management-System-PLSQL/tree/main
+
+--ファイル名
+　README.md
+
 --文字数
-　約 行
+　約152行
 
 --備考
-　特になし
+　参考先のコードを分割して複数回掛けて解析予定
 
 --コード
 
@@ -66,7 +70,6 @@ CREATE TABLE room_registry(room_id number,
                            CHECK (Room_Availability in ('available' , 'booked' ))
                            );
 
-
 # Add Hotel 
 
 ```sql
@@ -83,7 +86,6 @@ CREATE OR REPLACE PROCEDURE add_hotel(h_id number,
 BEGIN
     INSERT INTO hotel VALUES(hotel_seq.nextval, h_name, h_address, h_phone);
 END;
-
 
 # Add Room
 
@@ -108,7 +110,6 @@ BEGIN
             dbms_output.put_line(' The room size has to be one of the following: small, medium, large');
 END;
 
-
 # Add Guest
 
 ```sql
@@ -124,7 +125,6 @@ CREATE OR REPLACE PROCEDURE add_guest(g_id number,
 BEGIN
     INSERT INTO guest VALUES(guest_seq.nextval, g_name, g_phone, g_email);
 END;
-
 
 # Book Room
 
@@ -178,3 +178,63 @@ CREATE OR REPLACE PROCEDURE cancel_room_reservation(r_id number,
 BEGIN
     DELETE FROM room_reservation WHERE room_id = r_id AND guest_id = g_id AND booking_id = b_id;
 END;
+
+
+# 4- Creating Features For
+- **Retrieving** hotel, room, guest, room and event details.
+
+# Find Hotel
+
+```sql
+-- Creating a function to retrieve a hotel
+CREATE OR REPLACE FUNCTION find_hotel(h_id number) RETURN varchar2 IS
+
+v_h_id hotel.hotel_id%type;
+v_h_name hotel.hotel_name%type;
+v_h_address hotel.hotel_address%type;
+v_h_phone hotel.hotel_phone%type;
+hotel_details varchar2(150);
+
+BEGIN
+    SELECT hotel_id,
+           hotel_name,
+           hotel_address,
+           hotel_phone
+    INTO v_h_id,
+         v_h_name,
+         v_h_address,
+         v_h_phone
+    FROM hotel
+    WHERE hotel_id = h_id;
+    hotel_details := 'Hotel name is  ' || v_h_name || ', The address is  ' || v_h_address || ' and the phone number is ' || v_h_phone;
+    RETURN hotel_details;
+END;
+
+# Find Room
+
+```sql
+-- Creating a function to retrieve room details
+CREATE OR REPLACE FUNCTION find_room(r_id number) RETURN varchar2 IS
+
+v_room_id room.room_id%type;
+v_hotel_id room.hotel_id%type;
+v_room_size room.room_size%type;
+v_room_capacity room.room_capacity%type;
+room_details varchar2(150);
+
+BEGIN
+    SELECT room_id,
+           hotel_id,
+           room_size,
+           room_capacity
+    INTO v_room_id,
+         v_hotel_id,
+         v_room_size,
+         v_room_capacity
+    FROM room
+    WHERE room_id = r_id;
+    room_details := 'Room ID is  ' ||v_room_id || ' That is in hotel ID  ' || v_hotel_id || ' The room size is  ' || v_room_size || ' and the capacity is  ' || v_room_capacity;
+    RETURN room_details;
+END;
+
+
