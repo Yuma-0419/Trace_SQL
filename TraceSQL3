@@ -21,6 +21,9 @@ CREATE TABLE hotel(hotel_id number primary key,
                    hotel_address varchar2(25),
                    hotel_phone varchar2(25)
                    );
+　→ホテル情報を管理する「hotel」テーブルを作成する。
+　 ID、名称、メールアドレス、電話番号という項目からなり、
+　 項目「hotel_id」はnumber型で主キー設定、それ以外は上限が25文字のVARCHAR2型で設定されている。
 
 CREATE TABLE room(room_id number primary key,
                   hotel_id number,
@@ -32,7 +35,13 @@ CREATE TABLE room(room_id number primary key,
                   CONSTRAINT room_size_ck
                   CHECK (Room_Size in ('small' , 'medium' , 'large' ))
                   );
-        
+　→部屋情報を管理する「room」テーブルを作成する。
+　 ルームID、ホテルID、価格、サイズ、収容人数という項目からなり、
+　 項目「room_id」はnumber型で主キー設定、
+　 項目「hotel_id」は「room_fk」という制約名でテーブル「Hotel」の「hotel_id」を参照する外部キー設定、
+　 項目「Room_Size」は「room_size_ck」制約名で「small」「medium」「large」以外の文字は弾くように設定されている。
+
+
 CREATE TABLE guest(guest_id number primary key,
                    guest_name varchar2(25),
                    guest_phone varchar2(25),
