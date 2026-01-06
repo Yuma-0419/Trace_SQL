@@ -21,9 +21,8 @@ CREATE TABLE hotel(hotel_id number primary key,
                    hotel_address varchar2(25),
                    hotel_phone varchar2(25)
                    );
-　→ホテル情報を管理する「hotel」テーブルを作成する。
-　 ID、名称、住所、電話番号という項目から構成されていて、
-　 項目「hotel_id」はnumber型で主キー設定、それ以外は上限が25文字のVARCHAR2型で設定されている。
+　→ ホテルID、ホテル名、住所、電話番号の4項目からなる、ホテル情報を管理するための「hotel」テーブルを作成するSQL。
+　 「hotel_id」が主キーとして設定されている。
 
 CREATE TABLE room(room_id number primary key,
                   hotel_id number,
@@ -35,20 +34,17 @@ CREATE TABLE room(room_id number primary key,
                   CONSTRAINT room_size_ck
                   CHECK (Room_Size in ('small' , 'medium' , 'large' ))
                   );
-　→部屋情報を管理する「room」テーブルを作成する。
-　 ルームID、ホテルID、価格、サイズ、収容人数という項目から構成されていて、
-　 項目「room_id」はnumber型で主キー設定、
-　 項目「hotel_id」は「room_fk」という制約名でテーブル「Hotel」の「hotel_id」を参照する外部キー設定、
-　 項目「Room_Size」は「room_size_ck」制約名で「small」「medium」「large」以外の文字は弾くように設定されている。
+　→ルームID、ホテルID、価格、サイズ、収容人数の5項目からなる、部屋情報を管理するための「room」テーブルを作成するSQL。
+　 「room_id」は主キー、「hotel_id」は「Hotel」テーブルを参照する外部キーとして設定されていて、
+　「Room_Size」の値について「small」「medium」「large」のみを許可するチェック制約が設定されている。
 
 CREATE TABLE guest(guest_id number primary key,
                    guest_name varchar2(25),
                    guest_phone varchar2(25),
                    guest_email varchar2(35)
                    );
-　→顧客情報を管理する「guest」テーブルを作成する。
-　 顧客ID、顧客名、電話番号、Eメールアドレスという項目から構成されていて、
-　 項目「guest_id」はnumber型で主キー設定、それ以外は上限が25文字のVARCHAR2型で設定されている。
+　→顧客ID、顧客名、電話番号、Eメールアドレスの4項目からなる、顧客情報を管理するための「guest」テーブルを作成するSQL。
+　 「guest_id」が主キーとして設定されている。
 
 CREATE TABLE room_reservation(room_id number,
                               guest_id number,
@@ -58,18 +54,15 @@ CREATE TABLE room_reservation(room_id number,
                               FOREIGN KEY(room_id) REFERENCES room(room_id),
                               FOREIGN KEY(guest_id) REFERENCES guest(guest_id)
                               );                       
-　→部屋の予約情報を管理する「room_reservation」テーブルを作成する。
-　 ルームID、顧客ID、予約ID、予約請求書という項目から構成されていて、
-　 項目「room_id」はテーブル「room」の「room_id」を参照する外部キー設定、
-　 項目「guest_id」はテーブル「guest」の「guest_id」を参照する外部キー設定、
-　 項目「room_id,guest_id」を基に「reserv_pk」という制約名で複合主キーが設定されている。
+　→ルームID、顧客ID、予約ID、予約請求書の4項目からなる、部屋の予約情報を管理するための「room_reservation」テーブルを作成するSQL。
+　 「room_id」は「room」テーブル、「guest_id」は「guest」テーブルを参照する外部キーとして設定されていて、
+　 尚且つ「room_id」と「guest_id」からなる複合主キー「reserv_pk」が設定されている。
 
 CREATE TABLE event(event_id number primary key,
                    event_name varchar2(25)
                    );
-　→イベント情報を管理する「event」テーブルを作成する。
-　 イベントID、イベント名という項目から構成されていて、
-　 項目「event_id」はnumber型で主キー設定、項目「event_name」は上限が25文字のVARCHAR2型で設定されている。
+　→イベントID、イベント名の2項目からなる、イベント情報を管理するための「event」テーブルを作成するSQL。
+　 「event_id」が主キーとして設定されている。
 
 CREATE TABLE event_in_hotel(event_id number,
                             guest_id number,
@@ -79,11 +72,9 @@ CREATE TABLE event_in_hotel(event_id number,
                             event_invoice number,
                             CONSTRAINT room_hotel_pk PRIMARY KEY(event_id,guest_id)
                             );
-　→ホテルのイベント情報を管理する「event_in_hotel」テーブルを作成する。
-　 イベントID、顧客ID、予約ID、開始日付、終了日付、イベント請求書という項目から構成されていて、
-　 項目「room_id」「guest_id」「reserv_id」はnumber型、
-　 項目「start_date」「end_date」はdate型、
-　 項目「event_id,guest_id」を基に「room_hotel_pk」という制約名で複合主キーが設定されている。
+　→イベントID、顧客ID、予約ID、開始日付、終了日付、イベント請求書の6項目からなる、
+　 ホテルのイベント情報を管理するための「event_in_hotel」テーブルを作成するSQL。
+　 「event_id」と「guest_id」からなる複合主キー「room_hotel_pk」が設定されている。
 
 -- Creating a table that restores the availability of the room
 CREATE TABLE room_registry(room_id number, 
@@ -93,12 +84,17 @@ CREATE TABLE room_registry(room_id number,
                            CONSTRAINT registry_pk PRIMARY KEY(room_id, registry_date),
                            CHECK (Room_Availability in ('available' , 'booked' ))
                            );
+　→ルームID・ホテルID・登録日・空き状況の4項目からなる、部屋の空き状況を管理するための「room_registry」テーブルを作成するSQL。
+　 「room_id」と「registry_date」からなる複合主キー「registry_pk」と、
+　 「Room_Availability」の値について「available」「booked」のみを許可するチェック制約が設定されている。
 
 # Add Hotel 
 
 ```sql
 -- Creating Sequence for Hotel_id
 CREATE SEQUENCE hotel_seq START WITH 1 INCREMENT BY 1 MAXVALUE 999999 ORDER;
+
+　→初期値1、増加分1、最大値999999で、実行順に番号を割り当てるホテルID用シーケンス「hotel_seq」を作成するSQL。
 
 -- Creating a procedure to add new hotels
 CREATE OR REPLACE PROCEDURE add_hotel(h_id number,
@@ -109,12 +105,16 @@ CREATE OR REPLACE PROCEDURE add_hotel(h_id number,
 BEGIN
     INSERT INTO hotel VALUES(hotel_seq.nextval, h_name, h_address, h_phone);
 END;
+　→「hotel」テーブルにデータを入力するため、シーケンス「hotel_seq」を用いてホテルIDを順繰りで採番して、
+　 他は引数で受け取った情報をINSERTするストアドプロシージャ「add_hotel」を作成するSQL。
+
 
 # Add Room
 
 ```sql
 -- Creating Sequence for room_id
 CREATE SEQUENCE room_seq START WITH 1 INCREMENT BY 1 MAXVALUE 999999 ORDER;
+　→初期値1、増加分1、最大値999999で、実行順に番号を割り当てるルームID用シーケンス「room_seq」を作成するSQL。
 
 -- Creating a procedure to add a new ROOM
 CREATE OR REPLACE PROCEDURE add_room(r_id number,
@@ -132,12 +132,17 @@ BEGIN
         WHEN unique_exception THEN
             dbms_output.put_line(' The room size has to be one of the following: small, medium, large');
 END;
+　→「room」テーブルにデータを入力するため、シーケンス「room_seq」を用いてルームIDを順繰りで採番して、
+　 他は引数で受け取った情報をINSERTするストアドプロシージャ「add_room」を作成するSQL。
+　 例外規定として、「-00001」エラー（一意制約違反）が発生した場合に「 The room size has to be one of the following: small, medium, large」
+　 という文言が表示されるように設定されている。
 
 # Add Guest
 
 ```sql
 -- Creating Sequence for guest_id
 CREATE SEQUENCE guest_seq START WITH 1 INCREMENT BY 1 MAXVALUE 999999 ORDER;
+　→初期値1、増加分1、最大値999999で、実行順に番号を割り当てる顧客ID用シーケンス「guest_seq」を作成するSQL。
 
 -- Creating a procedure to add a new GUEST
 CREATE OR REPLACE PROCEDURE add_guest(g_id number,
@@ -148,6 +153,8 @@ CREATE OR REPLACE PROCEDURE add_guest(g_id number,
 BEGIN
     INSERT INTO guest VALUES(guest_seq.nextval, g_name, g_phone, g_email);
 END;
+　→「guest」テーブルにデータを入力するため、シーケンス「guest_seq」を用いて顧客IDを順繰りで採番して、
+　 他は引数で受け取った情報をINSERTするストアドプロシージャ「add_guest」を作成するSQL。
 
 # Book Room
 
