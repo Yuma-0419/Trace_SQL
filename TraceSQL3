@@ -93,7 +93,6 @@ CREATE TABLE room_registry(room_id number,
 ```sql
 -- Creating Sequence for Hotel_id
 CREATE SEQUENCE hotel_seq START WITH 1 INCREMENT BY 1 MAXVALUE 999999 ORDER;
-
 　→初期値1、増加分1、最大値999999で、実行順に番号を割り当てるホテルID用シーケンス「hotel_seq」を作成するSQL。
 
 -- Creating a procedure to add new hotels
@@ -107,7 +106,7 @@ BEGIN
 END;
 　→「hotel」テーブルにデータを入力するため、シーケンス「hotel_seq」を用いてホテルIDを順繰りで採番して、
 　 他は引数で受け取った情報をINSERTするストアドプロシージャ「add_hotel」を作成するSQL。
-
+　　＊ホテル情報を登録する処理。
 
 # Add Room
 
@@ -136,6 +135,7 @@ END;
 　 他は引数で受け取った情報をINSERTするストアドプロシージャ「add_room」を作成するSQL。
 　 例外規定として、「-00001」エラー（一意制約違反）が発生した場合に「 The room size has to be one of the following: small, medium, large」
 　 という文言が表示されるように設定されている。
+　　＊部屋情報を登録する処理。
 
 # Add Guest
 
@@ -155,12 +155,14 @@ BEGIN
 END;
 　→「guest」テーブルにデータを入力するため、シーケンス「guest_seq」を用いて顧客IDを順繰りで採番して、
 　 他は引数で受け取った情報をINSERTするストアドプロシージャ「add_guest」を作成するSQL。
+　　＊顧客情報を登録する処理。
 
 # Book Room
 
 ```sql
 -- Creating Sequence for booking_id
 CREATE SEQUENCE book_seq START WITH 1 INCREMENT BY 1 MAXVALUE 999999 ORDER;
+　→初期値1、増加分1、最大値999999で、実行順に番号を割り当てる予約ID用シーケンス「book_seq」を作成するSQL。
 
 -- Creating a procedure to book a reservation
 CREATE OR REPLACE PROCEDURE book_room(r_id number,
@@ -179,13 +181,19 @@ BEGIN
         WHEN foreign_exception THEN
          dbms_output.put_line(' There is a foreign key constraint, Kindly consider the values');
 END;
-
+　→「room_reservation」テーブルにデータを入力するため、シーケンス「book_seq」を用いて顧客IDを順繰りで採番して、
+　 他は引数で受け取った情報をINSERTするストアドプロシージャ「book_room」を作成するSQL。
+　 例外規定として、「no_data_found」エラーが発生した場合に「[顧客ID] + Is not a registered guest, Kindly registed the guest before booking a room」
+　 という文言が表示される設定と、
+　 「-02291」(外部キー制約違反)エラーが発生した場合に「 There is a foreign key constraint, Kindly consider the values」という文言が表示されるように設定されている。
+　　＊部屋の予約をする処理。
 
 # Add Event
 
 ```sql
 -- Creating Sequence for event_id
 CREATE SEQUENCE event_seq START WITH 1 INCREMENT BY 1 MAXVALUE 999999 ORDER;
+　→初期値1、増加分1、最大値999999で、実行順に番号を割り当てるイベントID用シーケンス「event_seq」を作成するSQL。
 
 -- Creating a procedure to add a new event
 CREATE OR REPLACE PROCEDURE add_event(e_id number,
@@ -195,7 +203,9 @@ CREATE OR REPLACE PROCEDURE add_event(e_id number,
 BEGIN
     INSERT INTO event VALUES(event_seq.nextval, e_name);
 END;
-
+　→「event」テーブルにデータを入力するため、シーケンス「event_seq」を用いて顧客IDを順繰りで採番して、
+　 他は引数で受け取った情報をINSERTするストアドプロシージャ「add_event」を作成するSQL。
+　　＊イベント情報を登録する処理
 
 # Cancel Room Reservation
 
@@ -208,7 +218,9 @@ CREATE OR REPLACE PROCEDURE cancel_room_reservation(r_id number,
 BEGIN
     DELETE FROM room_reservation WHERE room_id = r_id AND guest_id = g_id AND booking_id = b_id;
 END;
-
+　→「room_reservation」テーブルから特定のデータを削除するため、
+　 引数で受け取った情報を条件に指定してDELETEするストアドプロシージャ「cancel_room_reservation」を作成するSQL。
+　　＊部屋の予約をキャンセルする処理。
 
 # 4- Creating Features For
 - **Retrieving** hotel, room, guest, room and event details.
@@ -239,6 +251,11 @@ BEGIN
     hotel_details := 'Hotel name is  ' || v_h_name || ', The address is  ' || v_h_address || ' and the phone number is ' || v_h_phone;
     RETURN hotel_details;
 END;
+　→引数として受け取ったh_idの値を条件として、「hotel」テーブルから該当するデータを取得して、
+　 「Hotel name is  [ホテル名], The address is [住所] and the phone number is [電話番号]」と表示するファンクション「find_hotel」を作成するSQL。
+　　＊指定されたホテルIDに該当するホテルの情報を表示するSQL。
+　　--変数指定「v_h_id hotel.hotel_id%type;」の構成について、「変数名 テーブル名.項目%type」という構成で、
+　　　特定のテーブルの項目のデータ型をそのまま変数のデータ型として設定する構成となっている
 
 # Find Room
 
@@ -266,5 +283,7 @@ BEGIN
     room_details := 'Room ID is  ' ||v_room_id || ' That is in hotel ID  ' || v_hotel_id || ' The room size is  ' || v_room_size || ' and the capacity is  ' || v_room_capacity;
     RETURN room_details;
 END;
-
-
+　→引数として受け取ったr_idの値を条件として、「room」テーブルから該当するデータを取得して、
+　 「Room ID is [ルームID] That is in hotel ID  [ホテルID] The room size is  [サイズ] and the capacity is  [収容人数]」
+　 と表示するファンクション「find_room」を作成するSQL。
+　　＊指定されたルームIDに該当する部屋の情報を表示するSQL。
