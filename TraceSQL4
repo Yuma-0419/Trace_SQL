@@ -239,3 +239,94 @@ PROCEDURE cancel_room_reservation(r_id number,
                                                     );
                                                 
 END;
+
+-- Package Body
+CREATE OR REPLACE PACKAGE BODY create_object IS
+PROCEDURE add_hotel(h_id number,
+                                      h_name varchar2,
+                                      h_address varchar2,
+                                      h_phone varchar2
+                      ) IS
+
+BEGIN
+
+    INSERT INTO hotel VALUES(hotel_seq.nextval, h_name, h_address, h_phone);
+    
+END;
+
+PROCEDURE add_room(r_id number,
+                                     h_id number,
+                                     r_price number,
+                                     r_size varchar2,
+                                     r_capacity number
+                                     ) IS
+unique_exception EXCEPTION;  
+PRAGMA EXCEPTION_INIT(unique_exception, -00001);
+                                            
+BEGIN
+    
+    INSERT INTO room VALUES(room_seq.nextval, h_id, r_price, r_size, r_capacity);
+
+    EXCEPTION
+        WHEN unique_exception THEN
+            dbms_output.put_line(' The room size has to be one of the following: small, medium, large');
+    
+END;
+
+PROCEDURE add_guest(g_id number,
+                                      g_name varchar2,
+                                      g_phone varchar2,
+                                      g_email varchar2
+                                      ) IS
+BEGIN
+    
+    INSERT INTO guest VALUES(guest_seq.nextval, g_name, g_phone, g_email);
+
+END;
+
+PROCEDURE book_room(r_id number,
+                                      g_id number,
+                                      b_id number,
+                                      b_invoice number
+                                      ) IS
+                                                                                         
+foreign_exception EXCEPTION;                  
+PRAGMA EXCEPTION_INIT(foreign_exception, -02291);       
+                                                
+BEGIN
+
+    INSERT INTO room_reservation VALUES(r_id, g_id, b_id, b_invoice);
+    
+    EXCEPTION
+        WHEN no_data_found THEN
+                    dbms_output.put_line(g_id || ' Is not a registered guest, Kindly registed the guest before booking a room');
+           
+        WHEN foreign_exception THEN
+         dbms_output.put_line(' There is a foreign key constraint, Kindly consider the values');
+
+END;
+
+PROCEDURE add_event(e_id number,
+                                      e_name varchar2
+                                      ) IS
+                                               
+
+BEGIN
+
+    INSERT INTO event VALUES(event_seq.nextval, e_name);
+    
+END;
+
+PROCEDURE cancel_room_reservation(r_id number,
+                                                    g_id number,
+                                                    b_id number
+                                                    ) IS
+                                                                                       
+                                                                     
+BEGIN
+
+    DELETE FROM room_reservation WHERE room_id = r_id AND guest_id = g_id AND booking_id = b_id;
+    
+END;
+END;
+```
