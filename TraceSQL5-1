@@ -1,1 +1,172 @@
+--対象URL
+　https://github.com/mustafaa7med/Hotel-Management-System-PLSQL/tree/main
 
+--ファイル名
+　README.md
+
+--文字数
+　約120行
+
+--備考
+　参考先のコードを分割して複数回掛けて解析予定
+
+--コード
+# Finding Object Package
+
+```sql
+-- Package Spec
+CREATE OR REPLACE PACKAGE find_object IS
+
+FUNCTION find_hotel(h_id number) RETURN varchar2;
+
+FUNCTION find_room(r_id number) RETURN varchar2;
+
+FUNCTION find_reservation(b_id number) RETURN varchar2;
+
+FUNCTION find_event(e_id number) RETURN varchar2;
+
+FUNCTION find_event_reservation(e_id number) RETURN varchar2;
+
+END;
+　　→関連する5つのファンクションを1まとめにしたパッケージ「find_object」の仕様部を作成するSQL
+　　＊5つの検索機能を1つのパッケージにまとめるSQL。
+　　　具体的な機能は下記の「Package Body」で実装。
+
+-- Package Body
+CREATE OR REPLACE PACKAGE BODY find_object IS
+
+FUNCTION find_hotel(h_id number) RETURN varchar2 IS
+
+v_h_id hotel.hotel_id%type;
+v_h_name hotel.hotel_name%type;
+v_h_address hotel.hotel_address%type;
+v_h_phone hotel.hotel_phone%type;
+hotel_details varchar2(150);
+
+BEGIN
+
+    SELECT hotel_id,
+           hotel_name,
+           hotel_address,
+           hotel_phone
+    INTO v_h_id,
+         v_h_name,
+         v_h_address,
+         v_h_phone
+    FROM hotel
+    WHERE hotel_id = h_id;
+    
+    hotel_details := 'Hotel name is  ' || v_h_name || ', The address is  ' || v_h_address || ' and the phone number is ' || v_h_phone;
+    RETURN hotel_details;
+    
+END;
+
+FUNCTION find_room(r_id number) RETURN varchar2 IS
+
+
+v_room_id room.room_id%type;
+v_hotel_id room.hotel_id%type;
+v_room_size room.room_size%type;
+v_room_capacity room.room_capacity%type;
+room_details varchar2(150);
+
+BEGIN
+
+    SELECT room_id,
+           hotel_id,
+           room_size,
+           room_capacity
+    INTO v_room_id,
+         v_hotel_id,
+         v_room_size,
+         v_room_capacity
+    FROM room
+    WHERE room_id = r_id;
+    
+    room_details := 'Room ID is  ' ||v_room_id || ' That is in hotel ID  ' || v_hotel_id || ' The room size is  ' || v_room_size || ' and the capacity is  ' || v_room_capacity;
+    RETURN room_details;
+    
+END;
+
+FUNCTION find_reservation(b_id number) RETURN varchar2 IS
+
+v_room_id room_reservation.room_id%type;
+v_guest_id room_reservation.guest_id%type;
+v_booking_id room_reservation.booking_id%type;
+v_booking_invoice room_reservation.booking_invoice%type;
+reservation_details varchar2(150);
+
+BEGIN
+
+    SELECT room_id,
+           guest_id,
+           booking_id,
+           booking_invoice
+    INTO v_room_id,
+         v_guest_id,
+         v_booking_id,
+         v_booking_invoice
+    FROM room_reservation
+    WHERE booking_id = b_id;
+    
+    reservation_details := 'Room ' || v_room_id || ' Is reserved for ' || v_guest_id || ' with a booking ID ' || v_booking_id || ' and a booking invoice of approx. ' || v_booking_invoice;
+    RETURN reservation_details;
+    
+END;
+
+FUNCTION find_event(e_id number) RETURN varchar2 IS
+
+
+v_event_id event.event_id%type;
+v_event_name event.event_name%type;
+event_details VARCHAR2(150);
+
+BEGIN
+
+    SELECT event_id,
+           event_name
+    INTO v_event_id,
+         v_event_name
+    FROM event
+    WHERE event_id = e_id;
+    
+    event_details := 'Event id ' || v_event_id || ' is  ' || v_event_name;
+    RETURN event_details;
+
+END;
+
+FUNCTION find_event_reservation(e_id number) RETURN varchar2 IS
+
+v_event_id event_in_hotel.event_id%type;
+v_guest_id event_in_hotel.guest_id%type;
+v_reserv_id event_in_hotel.reserv_id%type;
+v_start_date event_in_hotel.start_date%type;
+v_end_date event_in_hotel.end_date%type;
+v_event_invoice event_in_hotel.event_invoice%type;
+event_reservation_details varchar2(250);
+
+BEGIN
+
+    SELECT event_id,
+           guest_id,
+           reserv_id,
+           start_date,
+           end_date,
+           event_invoice
+    INTO    v_event_id,
+            v_guest_id,
+            v_reserv_id,
+            v_start_date,
+            v_end_date,
+            v_event_invoice
+    FROM event_in_hotel
+    WHERE event_id = e_id;
+    
+    event_reservation_details := 'Event  ' || v_event_id || ' which is booked by guest ID ' || v_guest_id || ' with a reservation id ' || v_reserv_id || ' has started on ' || v_start_date ||
+                                              ' and an end date of ' || v_end_date || ' and its invoice is ' || v_event_invoice;
+    RETURN event_reservation_details;
+    
+END;
+END;
+　→「CREATE OR REPLACE PACKAGE BODY find_object IS」以下で作成された5つのファンクションをパッケージ「find_object」にまとめて実装するSQL。
+　　＊ファンクションの処理内容については、「TraceSQL3」「TraceSQL4」で解析したファンクションと同一のため割愛
