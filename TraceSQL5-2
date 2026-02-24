@@ -1,16 +1,11 @@
 --対象URL
 　https://github.com/issamsensi/oracle-sql-practice-exam/blob/main/schema/hr_schema.sql
-　https://github.com/issamsensi/oracle-sql-practice-exam/blob/main/solutions/hr_solutions.sql
 
 --ファイル名
 　hr_schema.sql
-　hr_solutions.sql
 
 --文字数
-　合計214行
-
---備考
-　複数ファイルを1まとめにして確認
+　214行
 
 --コード１
 
