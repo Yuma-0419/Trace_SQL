@@ -81,7 +81,7 @@ CREATE TABLE EMPLOYEES (
     CONSTRAINT FK_EMP_JOB FOREIGN KEY (JOB_ID) REFERENCES JOBS(JOB_ID),
     CONSTRAINT FK_EMP_MANAGER FOREIGN KEY (MANAGER_ID) REFERENCES EMPLOYEES(EMPLOYEE_ID)
 );
-　→従業員ID、姓、名、メールアドレス、電話番号、入社日、役職ID、給与、歩合給割合、管理者ID、部門IDからなる従業員情報を管理るテーブル「EMPLOYEES」を作成するSQL。
+　→従業員ID、名、姓、メールアドレス、電話番号、入社日、役職ID、給与、歩合給割合、管理者ID、部門IDからなる従業員情報を管理るテーブル「EMPLOYEES」を作成するSQL。
 　　＊従業員情報と関連する諸情報を管理するテーブルを作成するためのSQL群。各テーブルはテーブル毎のIDによって結びついているイメージ。
 
 -- ============================================================================
